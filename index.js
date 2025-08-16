@@ -1,7 +1,8 @@
-const { Command } = require('commander');
-const program = new Command();
+import { Command } from 'commander'; 
+import fs from 'fs'
+import chalk from 'chalk';
 
-const fs = require('fs');
+const program = new Command();
 
 // helper function
 const initFileWithFirstTodo = (todo) => {
@@ -16,7 +17,7 @@ const initFileWithFirstTodo = (todo) => {
 
     const todoToBeAdded = JSON.stringify(initialTodoArr, null, 2)
 
-    fs.writeFile('output.json', todoToBeAdded, 'utf-8',  err => {
+    fs.writeFile('Todo-list.json', todoToBeAdded, 'utf-8',  err => {
         if(err) {
             console.log("Something went wrong while adding the todo in the list !!")
         }else {
@@ -30,12 +31,12 @@ program
   .description('CLI to alter todo list.')
   .version('1.0.0');
 
-// code to add a todo in the output.json file
+// code to add a todo in the Todo-list.json file
 program.command('add')
   .description('Add the given todo in the todo list')
   .argument('<string>', 'todo to be added')
   .action((todo) => {
-    fs.readFile('output.json', 'utf-8', (err, data) => {
+    fs.readFile('Todo-list.json', 'utf-8', (err, data) => {
         if(err) {
             if(err.code === "ENOENT") {
                 initFileWithFirstTodo(todo);
@@ -59,7 +60,7 @@ program.command('add')
 
                 const todoToBeAdded = JSON.stringify(todoData, null, 2)
 
-                fs.writeFile('output.json', todoToBeAdded, 'utf-8',  err => {
+                fs.writeFile('Todo-list.json', todoToBeAdded, 'utf-8',  err => {
                     if(err) {
                         console.log("Something went wrong while adding the todo in the list !!")
                     }else {
@@ -71,12 +72,12 @@ program.command('add')
     })
   });
 
-// code to delete a todo in the output.json file
+// code to delete a todo in the Todo-list.json file
 program.command('delete')
   .description('delete the given todo id from the todo list')
   .argument('<number>', 'todo id to be deleted')
   .action((todoId) => {
-    fs.readFile('output.json', 'utf-8', (err, data) => {
+    fs.readFile('Todo-list.json', 'utf-8', (err, data) => {
         if(err) {
             console.log("Error in reading the file !!")
         }else {
@@ -111,7 +112,7 @@ program.command('delete')
 
             const newTodoArrToBeAdded = JSON.stringify(newTodoArr, null, 2);
 
-            fs.writeFile('output.json', newTodoArrToBeAdded, 'utf-8',  err => {
+            fs.writeFile('Todo-list.json', newTodoArrToBeAdded, 'utf-8',  err => {
                 if(err) {
                     console.log("Something went wrong while deleteing the todo from the list !!")
                 }else {
@@ -128,7 +129,7 @@ program.command('update')
   .argument('<number>', 'todo id to be updated')
   .argument('<string>', 'new todo which is to be updated')
   .action((todoId, updatedTodo) => {
-    fs.readFile('output.json', 'utf-8', (err, data) => {
+    fs.readFile('Todo-list.json', 'utf-8', (err, data) => {
         if(err) {
             console.log("Error in reading the file !!")
         }else {
@@ -160,7 +161,7 @@ program.command('update')
 
             const newTodoArrToBeAdded = JSON.stringify(todoData, null, 2);
 
-            fs.writeFile('output.json', newTodoArrToBeAdded, 'utf-8',  err => {
+            fs.writeFile('Todo-list.json', newTodoArrToBeAdded, 'utf-8',  err => {
                 if(err) {
                     console.log("Something went wrong while updating the todo !!")
                 }else {
@@ -175,7 +176,7 @@ program.command('update')
 program.command('show')
   .description('show all the todo in the todo-list')
   .action(() => {
-    fs.readFile('output.json', 'utf-8', (err, data) => {
+    fs.readFile('Todo-list.json', 'utf-8', (err, data) => {
         if(err) {
             console.log("Error in reading the file !!")
         }else {
@@ -191,9 +192,14 @@ program.command('show')
                 return;
             }
 
+            console.log("-----------------------------------------------------------------")
+            console.log(chalk.green.underline.bold("ToDo - List\n"));
+
             for(let i = 0; i < todoData.length; i++) {
-                console.log(i + 1, ") ", todoData[i].title);
+                console.log(i + 1, ") (id: ",todoData[i].id, ")", todoData[i].title);
             }
+
+            console.log("-----------------------------------------------------------------")
         }
     })
   });
